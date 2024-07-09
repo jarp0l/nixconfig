@@ -8,10 +8,14 @@
     enable = true;
 
     # Theme
-    colorschemes.tokyonight.enable = true;
+    # colorschemes.tokyonight.enable = true;
+    colorschemes.catppuccin = {
+      enable = true;
+      flavour = "macchiato";
+    };
 
     # Settings
-    options = {
+    opts = {
       expandtab = true;
       shiftwidth = 2;
       smartindent = true;
@@ -22,6 +26,12 @@
     # Keymaps
     globals = {
       mapleader = " ";
+    };
+
+    # Clipboard
+    clipboard = {
+      register = "unnamedplus";
+      providers.wl-copy.enable = true;
     };
 
     plugins = {
