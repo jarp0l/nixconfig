@@ -1,3 +1,4 @@
+# Neovim configuration managed using https://github.com/nix-community/nixvim
 { flake, ... }:
 {
   imports = [
@@ -8,10 +9,9 @@
     enable = true;
 
     # Theme
-    # colorschemes.tokyonight.enable = true;
     colorschemes.catppuccin = {
       enable = true;
-      flavour = "macchiato";
+      settings.flavour = "macchiato";
     };
 
     # Settings
@@ -23,15 +23,15 @@
       number = true;
     };
 
-    # Keymaps
-    globals = {
-      mapleader = " ";
-    };
-
     # Clipboard
     clipboard = {
       register = "unnamedplus";
       providers.wl-copy.enable = true;
+    };
+
+    # Keymaps
+    globals = {
+      mapleader = " ";
     };
 
     plugins = {
@@ -58,12 +58,16 @@
         enable = true;
         keymaps = {
           "<leader>ff" = {
-            desc = "file finder";
+            options.desc = "file finder";
             action = "find_files";
+          };
+          "<leader>fg" = {
+            options.desc = "find via grep";
+            action = "live_grep";
           };
         };
         extensions = {
-          file_browser.enable = true;
+          file-browser.enable = true;
         };
       };
 
@@ -73,7 +77,7 @@
         servers = {
           hls.enable = true;
           marksman.enable = true;
-          nil_ls.enable = true;
+          nil-ls.enable = true;
           rust-analyzer = {
             enable = true;
             installCargo = false;
@@ -84,3 +88,8 @@
     };
   };
 }
+
+
+
+
+

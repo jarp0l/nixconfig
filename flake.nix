@@ -1,4 +1,9 @@
 {
+  nixConfig = {
+    extra-substituters = "https://om.cachix.org";
+    extra-trusted-public-keys = "om.cachix.org-1:ifal/RLZJKN4sbpScyPGqJ2+appCslzu7ZZF/C01f2Q=";
+  };
+
   description = "A home-manager template providing useful tools & settings for Nix-based development";
 
   inputs = {
@@ -15,6 +20,7 @@
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
     nixvim.url = "github:nix-community/nixvim";
     nixvim.inputs.nixpkgs.follows = "nixpkgs";
+    omnix.url = "github:juspay/omnix";
   };
 
   outputs = inputs:
@@ -22,8 +28,8 @@
       systems = import inputs.systems;
       imports = [
         inputs.nixos-flake.flakeModule
-        ./nix/template.nix
-        ./nix/toplevel.nix
+        ./nix/modules/flake-parts/template.nix
+        ./nix/modules/flake-parts/toplevel.nix
       ];
 
       flake.nix-dev-home.username = "jarp0l";
@@ -33,8 +39,8 @@
 
         devShells.default = pkgs.mkShell {
           name = "nix-dev-home";
-          nativeBuildInputs = with pkgs; [ just ];
+          nativeBuildInputs = with pkgs; [ just nixd ];
         };
       };
     };
-}
+} 
