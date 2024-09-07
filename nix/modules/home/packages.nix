@@ -12,6 +12,7 @@
     omnix
     # Dev
     tmate
+    devbox # https://www.jetify.com/devbox/docs/
 
     # Essential tools
     ripgrep # Better `grep`
