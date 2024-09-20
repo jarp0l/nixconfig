@@ -26,21 +26,25 @@
   outputs = inputs:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = import inputs.systems;
-      imports = [
-        inputs.nixos-flake.flakeModule
-        ./nix/modules/flake-parts/template.nix
-        ./nix/modules/flake-parts/toplevel.nix
-      ];
+      # See ./nix/modules/flake-parts/*.nix for the modules that are imported here.
+      imports = with builtins;
+        map
+          (fn: ./nix/modules/flake-parts/${fn})
+          (attrNames (readDir ./nix/modules/flake-parts));
 
-      flake.nix-dev-home.username = "jarp0l";
+      flake = {
+        nix-dev-home.username = "jarp0l";
+      };
 
-      perSystem = { self', pkgs, ... }: {
-        formatter = pkgs.nixpkgs-fmt;
-
+      perSystem = { pkgs, ... }: {
         devShells.default = pkgs.mkShell {
-          name = "nix-dev-home";
-          nativeBuildInputs = with pkgs; [ just nixd ];
+          name = "nix-dev-home-shell";
+          meta.description = "Shell environment for modifying this Nix configuration";
+          packages = with pkgs; [
+            just
+            nixd
+          ];
         };
       };
     };
-} 
+}

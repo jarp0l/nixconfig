@@ -2,6 +2,9 @@
 { self, inputs, lib, ... }:
 
 {
+  imports = [
+    inputs.nixos-flake.flakeModule
+  ];
   flake = {
     # cf. https://nixos.asia/en/nix-modules
     options = {
@@ -29,16 +32,27 @@
         });
 
     # Enables 'nix run' to activate.
-    apps.default.program = pkgs.writeShellApplication {
-      name = "activate";
-      text = ''
-        set -x
-        ${lib.getExe self'.packages.activate} "${self.nix-dev-home.username}"@;
-      '';
+    apps.default = {
+      inherit (self'.packages.activate) meta;
+      program = pkgs.writeShellApplication {
+        name = "activate";
+        text = ''
+          set -x
+          ${lib.getExe self'.packages.activate} "${self.nix-dev-home.username}"@;
+        '';
+      };
     };
 
     # Enable 'nix build' to build the home configuration, but without
     # activating.
-    packages.default = self'.legacyPackages.homeConfigurations.${self.nix-dev-home.username}.activationPackage;
+    packages.default =
+      let pkg = self'.legacyPackages.homeConfigurations.${self.nix-dev-home.username}.activationPackage;
+      in pkg.overrideAttrs (oldAttrs: {
+        meta.description = "Built home configuration for user '${self.nix-dev-home.username}'";
+      });
+
+
+    # For 'nix fmt'
+    formatter = pkgs.nixpkgs-fmt;
   };
 }

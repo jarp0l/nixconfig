@@ -1,30 +1,60 @@
 # Allow using this repo in `nix flake init`
 { inputs, ... }:
 {
-  flake.templates.default = {
-    description = "A `home-manager` template providing useful tools & settings for Nix-based development";
-    welcomeText = ''
-      You have just created a home-manager flake.nix.
-
-      - Edit `home/modules/home/*.nix` to customize your home-manager configuration.
-      - Run `nix run` to apply the configuration.
-
-      Enjoy!
-    '';
-    path = builtins.path {
-      path = inputs.self;
-      filter = path: _: with inputs.nixpkgs.lib;
-        !(hasSuffix "LICENSE" path ||
-          hasSuffix "README.md" path ||
-          hasSuffix ".github/" path);
+  flake = rec {
+    templates.default = {
+      description = "A `home-manager` template providing useful tools & settings for Nix-based development";
+      welcomeText = ''
+        You have just created a home-manager flake.nix.
+  
+        - Edit `nix/modules/home/*.nix` to customize your home-manager configuration.
+        - Run `nix run` to apply the configuration.
+  
+        Enjoy!
+      '';
+      path = builtins.path {
+        path = inputs.self;
+        filter = path: _: with inputs.nixpkgs.lib;
+          !(hasSuffix "LICENSE" path ||
+            hasSuffix "README.md" path ||
+            hasSuffix ".github/" path);
+      };
     };
-  };
 
-  perSystem = { pkgs, ... }: {
-    # Used to replace username in flake.nix (see README.md)
-    #
-    # This is better than `nix run nixpkgs#sd` which will fetch the latest
-    # nixpkgs, not the one pinned in flake.nix.
-    packages.sd = pkgs.sd;
+    # https://omnix.page/om/init.html#spec
+    om.templates.nix-dev-home = {
+      template = templates.default;
+      params = [
+        {
+          name = "username";
+          description = "jarp0l";
+          placeholder = "runner";
+        }
+        # Git
+        {
+          name = "git-name";
+          description = "Prajwol Pradhan";
+          placeholder = "John Doe";
+        }
+        {
+          name = "git-email";
+          description = "57973356+jarp0l@users.noreply.github.com";
+          placeholder = "johndoe@example.com";
+        }
+        # Neovim
+        {
+          name = "neovim";
+          description = "Include Neovim configuration";
+          paths = [ "**/neovim**" ];
+          value = false;
+        }
+        {
+          name = "github-ci";
+          description = "Include GitHub Actions workflow configuration";
+          paths = [ ".github" ];
+          value = false;
+        }
+      ];
+    };
   };
 }
